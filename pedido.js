@@ -27,6 +27,35 @@
   const products = new Map();
   MENU.forEach(cat => cat.items.forEach(p => products.set(p.id, { ...p, cat: cat.id })));
 
+  // ---------- Clube de pontos (mesmas regras do programa da Baldini) ----------
+  // Ganha 1 ponto por R$ 1,00. Cada recompensa custa 20 pontos por R$ 1,00 do valor dela.
+  const POINTS = { perReal: 1, signup: 5, rewardPerReal: 20 };
+  const REWARDS = [
+    { id: 'batata-frita', name: 'Batata Frita Média', value: 16.99, img: 'img/menu/batata-frita.jpeg' },
+    { id: 'batata-cheddar-calabresa', name: 'Batata com Cheddar e Calabresa', value: 27.99, img: 'img/menu/batata-com-cheddar-e-calabresa.jpg' },
+    { id: 'batata-cheddar-bacon', name: 'Batata com Cheddar e Bacon', value: 29.99, img: 'img/menu/batata-com-cheddar-e-bacon.jpg' },
+    { id: 'entrega-gratis', name: 'Entrega grátis', value: null, img: null }
+  ].map(r => ({ ...r, points: r.value ? Math.ceil(r.value * POINTS.rewardPerReal) : null }));
+  const pointsFor = value => Math.floor(value * POINTS.perReal);
+  const rewardCost = r => r.points ? `${r.points} pontos` : `${POINTS.rewardPerReal} pontos por R$ 1 da taxa`;
+
+  function renderRewards() {
+    const list = $('rewardsList');
+    if (list) list.innerHTML = REWARDS.map(r => `
+      <article class="reward">
+        <div class="reward__img">${r.img ? `<img src="${r.img}" alt="" loading="lazy">` : '<span>🛵</span>'}</div>
+        <div>
+          <h4>${esc(r.name)}</h4>
+          <strong>${r.points ? `${r.points} <small>pontos</small>` : `<small>${POINTS.rewardPerReal} pontos por R$ 1 da taxa</small>`}</strong>
+        </div>
+      </article>`).join('');
+    const opts = $('rewardOptions');
+    if (opts) opts.innerHTML =
+      '<label><input type="radio" name="recompensa" value="" checked> Não, só juntar pontos</label>' +
+      REWARDS.map(r => `<label><input type="radio" name="recompensa" value="${r.id}"> ${esc(r.name)} <small class="opt-cost">${rewardCost(r)}</small></label>`).join('');
+  }
+  renderRewards();
+
   // Menor preço possível (para itens que dependem de uma escolha obrigatória)
   function minPrice(p) {
     let total = p.price;
@@ -270,6 +299,10 @@
     $('cartEmpty').hidden = qty > 0;
     $('goCheckout').disabled = qty === 0;
     $('clearCart').hidden = qty === 0;
+    const pts = pointsFor(subtotal());
+    $('cartPoints').hidden = qty === 0;
+    $('cartPoints').innerHTML = `⭐ Este pedido vale <b>${pts} pontos</b> no Clube Baldini`;
+    $('checkoutPoints').innerHTML = `⭐ Você ganha <b>${pts} pontos</b> com este pedido`;
 
     const list = $('cartList');
     list.innerHTML = cart.map((l, i) => `
@@ -311,14 +344,16 @@
     $('stepCheckout').hidden = step !== 'checkout';
     $('drawerTitle').textContent = step === 'cart' ? 'Sua sacola' : 'Finalizar pedido';
   }
+  let openFrame;
   function openCart() {
     showStep('cart');
     overlay.hidden = false;
-    requestAnimationFrame(() => { drawer.classList.add('is-open'); overlay.classList.add('is-open'); });
+    openFrame = requestAnimationFrame(() => { drawer.classList.add('is-open'); overlay.classList.add('is-open'); });
     drawer.setAttribute('aria-hidden', 'false');
     document.body.classList.add('no-scroll');
   }
   function closeCart() {
+    cancelAnimationFrame(openFrame);
     drawer.classList.remove('is-open');
     overlay.classList.remove('is-open');
     drawer.setAttribute('aria-hidden', 'true');
@@ -376,6 +411,7 @@
     const delivery = f.entrega.value === 'Delivery';
     const missing = [];
     if (!val('nome')) missing.push(['nome', 'nome']);
+    if (val('telefone').replace(/\D/g, '').length < 10) missing.push(['telefone', 'WhatsApp com DDD']);
     if (delivery && !val('endereco')) missing.push(['endereco', 'endereço']);
     if (delivery && !val('bairro')) missing.push(['bairro', 'bairro']);
     if (missing.length) {
@@ -389,7 +425,7 @@
 
     const msg = ['*NOVO PEDIDO - BALDINI BURGUER* 🍔', ''];
     msg.push(`👤 *Nome:* ${val('nome')}`);
-    if (val('telefone')) msg.push(`📞 *Telefone:* ${val('telefone')}`);
+    msg.push(`📞 *WhatsApp:* ${val('telefone')}`);
     msg.push('', '*🛍️ Itens do pedido:*');
     cart.forEach(l => {
       msg.push('', `*${l.qty}x ${l.name}* — ${brl(l.unit * l.qty)}`);
@@ -410,6 +446,10 @@
     if (pay === 'Dinheiro' && val('troco')) pay += ` (troco para R$ ${val('troco')})`;
     msg.push(`💳 *Pagamento:* ${pay}`);
     if (val('obs')) msg.push('', `📝 *Observações:* ${val('obs')}`);
+
+    msg.push('', `⭐ *Clube de pontos:* este pedido vale ${pointsFor(subtotal())} pontos (creditar no ${val('telefone')})`);
+    const reward = REWARDS.find(r => r.id === f.recompensa.value);
+    if (reward) msg.push(`🎁 *Quero trocar pontos por:* ${reward.name} (${rewardCost(reward)}) — confirmar saldo`);
 
     window.open(`https://api.whatsapp.com/send?phone=${WHATSAPP}&text=${encodeURIComponent(msg.join('\n'))}`, '_blank', 'noopener');
     toast('Pedido montado! É só confirmar o envio no WhatsApp ✅');
