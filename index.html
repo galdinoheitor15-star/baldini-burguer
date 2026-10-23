@@ -14,6 +14,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="pedido.css">
 </head>
 <body>
 
@@ -99,6 +100,7 @@
           <h3>Granada</h3>
           <p>3 carnes de 100g, 3 queijos derretidos, molho especial e salada.</p>
           <span class="price">R$ 30,99</span>
+          <button type="button" class="add-btn add-btn--wide" data-product="granada">+ Adicionar</button>
         </div>
       </article>
       <article class="hcard">
@@ -107,6 +109,7 @@
           <h3>Onion Boom</h3>
           <p>Hambúrguer de 100g, 2 anéis de cebola empanados, cheddar derretido e salada.</p>
           <span class="price">R$ 20,99</span>
+          <button type="button" class="add-btn add-btn--wide" data-product="onion-boom">+ Adicionar</button>
         </div>
       </article>
       <article class="hcard">
@@ -115,6 +118,7 @@
           <h3>Bomba Coalho</h3>
           <p>Hambúrguer de 100g, queijo coalho, molho especial e salada.</p>
           <span class="price">R$ 20,99</span>
+          <button type="button" class="add-btn add-btn--wide" data-product="bomba-coalho">+ Adicionar</button>
         </div>
       </article>
       <article class="hcard">
@@ -123,6 +127,7 @@
           <h3>Bomba Burguer</h3>
           <p>O clássico: hambúrguer de 100g, cheddar derretido, molho especial e salada.</p>
           <span class="price">R$ 17,99</span>
+          <button type="button" class="add-btn add-btn--wide" data-product="bomba-burguer">+ Adicionar</button>
         </div>
       </article>
     </div>
@@ -133,62 +138,12 @@
 <section class="section section--dark" id="cardapio">
   <div class="container">
     <div class="section__head">
-      <span class="kicker">Cardápio</span>
-      <h2>Escolha o seu <em>Bomba</em></h2>
-      <p class="muted">Toque em <b>+</b> para colocar na sacola e finalize o pedido pelo WhatsApp. Itens com * são apenas para delivery e retirada.</p>
+      <span class="kicker">Cardápio completo</span>
+      <h2>Monte o seu <em>pedido</em></h2>
+      <p class="muted">Toque no lanche, escolha os adicionais e coloque na sacola. No final, o pedido vai prontinho para o nosso WhatsApp.</p>
     </div>
-
-    <div class="tabs" role="tablist">
-      <button class="tab is-active" data-tab="chapa" role="tab">Na Chapa</button>
-      <button class="tab" data-tab="combos" role="tab">Brasa & Combos</button>
-      <button class="tab" data-tab="fritas" role="tab">Fritas</button>
-      <button class="tab" data-tab="sobremesas" role="tab">Sobremesas</button>
-      <button class="tab" data-tab="bebidas" role="tab">Bebidas</button>
-    </div>
-
-    <div class="menu is-active" data-panel="chapa">
-      <div class="item"><div><h4>Bomba Burguer*</h4><p>Pão brioche, hambúrguer de 100g, queijo cheddar derretido, molho especial e salada.</p></div><span>R$ 17,99</span></div>
-      <div class="item"><div><h4>Bomba Cheddar*</h4><p>Pão brioche, hambúrguer de 100g, cheddar derretido, cebola caramelizada, molho especial e salada.</p></div><span>R$ 17,99</span></div>
-      <div class="item"><div><h4>Bomba Egg*</h4><p>Pão brioche, hambúrguer de 100g, cheddar derretido, ovo, molho especial e salada.</p></div><span>R$ 19,99</span></div>
-      <div class="item"><div><h4>Bomba Doritos*</h4><p>Pão brioche, hambúrguer de 100g, cheddar derretido, Doritos, molho especial e salada.</p></div><span>R$ 19,99</span></div>
-      <div class="item"><div><h4>Bomba Coalho*</h4><p>Pão brioche, hambúrguer de 100g, queijo coalho, molho especial e salada.</p></div><span>R$ 20,99</span></div>
-      <div class="item"><div><h4>Bomba Bacon*</h4><p>Pão brioche artesanal, carne artesanal de 100g, queijo, bacon e salada.</p></div><span>R$ 20,99</span></div>
-      <div class="item"><div><h4>Onion Boom*</h4><p>Pão brioche, hambúrguer de 100g, 2 anéis de cebola empanados, cheddar derretido, molho especial e salada.</p></div><span>R$ 20,99</span></div>
-      <div class="item"><div><h4>Bomba Chicken*</h4><p>Pão brioche, frango suculento e crocante, cheddar derretido, molho especial e salada.</p></div><span>R$ 22,99</span></div>
-      <div class="item"><div><h4>Bomba Chiando*</h4><p>Pão brioche, 2 hambúrgueres de 100g, cheddar derretido, ovo, molho especial e salada.</p></div><span>R$ 26,99</span></div>
-      <div class="item"><div><h4>Super Calabresa*</h4><p>Pão brioche, 2 hambúrgueres de 100g, cheddar, ovo, calabresa, molho especial e salada.</p></div><span>R$ 27,99</span></div>
-      <div class="item"><div><h4>Granada*</h4><p>Pão brioche, 3 carnes de 100g, 3 queijos derretidos, molho especial e salada.</p></div><span>R$ 30,99</span></div>
-      <div class="item"><div><h4>Triplo Coalho*</h4><p>Pão brioche, 3 hambúrgueres de 100g, 3 fatias de queijo coalho, molho especial e salada.</p></div><span>R$ 32,99</span></div>
-    </div>
-
-    <div class="menu" data-panel="combos">
-      <div class="item"><div><h4>Hambúrgueres na Brasa 🔥</h4><p>Escolha o seu Bomba grelhado na brasa.</p></div><span><small>a partir de</small> R$ 23,99</span></div>
-      <div class="item"><div><h4>Combo na Brasa</h4><p>Burguer na brasa + batata frita + refri.</p></div><span><small>a partir de</small> R$ 44,99</span></div>
-      <div class="item"><div><h4>Combo na Chapa*</h4><p>Burguer na chapa + batata frita + refri.</p></div><span><small>a partir de</small> R$ 34,99</span></div>
-      <div class="item"><div><h4>Hambúrgueres na Chapa*</h4><p>Escolha o seu Bomba na chapa.</p></div><span><small>a partir de</small> R$ 17,99</span></div>
-    </div>
-
-    <div class="menu" data-panel="fritas">
-      <div class="item"><div><h4>Batata Frita <em class="badge">Mais pedido</em></h4><p>Sequinhas e crocantes.</p></div><span><small>a partir de</small> R$ 16,99</span></div>
-      <div class="item"><div><h4>Batata com Cheddar e Calabresa</h4><p>Porção de batata frita coberta com cheddar cremoso e calabresa.</p></div><span>R$ 27,99</span></div>
-      <div class="item"><div><h4>Batata com Cheddar e Bacon <em class="badge">Recomendado</em></h4><p>Porção de batata frita coberta com cheddar cremoso e bacon.</p></div><span>R$ 29,99</span></div>
-      <div class="item"><div><h4>Maionese Extra</h4><p>Porção extra de maionese temperada.</p></div><span>R$ 2,00</span></div>
-    </div>
-
-    <div class="menu" data-panel="sobremesas">
-      <div class="item"><div><h4>Brownie Tradicional <em class="badge">Novidade</em></h4><p>Sem recheio.</p></div><span>R$ 10,00</span></div>
-      <div class="item"><div><h4>Brownie de Nutella</h4><p>Recheado com Nutella.</p></div><span>R$ 12,00</span></div>
-      <div class="item"><div><h4>Brownie de Doce de Leite</h4><p>Recheado com doce de leite.</p></div><span>R$ 12,00</span></div>
-    </div>
-
-    <div class="menu" data-panel="bebidas">
-      <div class="item"><div><h4>Refrigerante Lata</h4><p>350ml.</p></div><span><small>a partir de</small> R$ 6,99</span></div>
-      <div class="item"><div><h4>Suco de Cajá <em class="badge">Novidade</em></h4><p>300ml, 100% da polpa natural.</p></div><span>R$ 7,99</span></div>
-      <div class="item"><div><h4>Suco de Graviola <em class="badge">Novidade</em></h4><p>300ml, 100% natural da fruta.</p></div><span>R$ 7,99</span></div>
-      <div class="item"><div><h4>H2OH! Limoneto</h4><p>Garrafa gelada.</p></div><span>R$ 8,00</span></div>
-      <div class="item"><div><h4>Refrigerante 1 Litro</h4><p>1 litro.</p></div><span><small>a partir de</small> R$ 11,99</span></div>
-    </div>
-
+    <nav class="menu-tabs" id="menuTabs" role="tablist" aria-label="Categorias do cardápio"></nav>
+    <div id="menuList"></div>
     <div class="center">
       <button type="button" class="btn btn--yellow" data-open-cart>🛍️ Ver minha sacola e finalizar</button>
     </div>
@@ -211,7 +166,7 @@
         <li>Combo na brasa (burger + fritas + refri) a partir de <b>R$ 44,99</b></li>
         <li>Pão brioche e molho especial da casa</li>
       </ul>
-      <a href="#cardapio" class="btn btn--yellow" data-goto-tab="combos">Quero o meu na brasa</a>
+      <a href="#cardapio" class="btn btn--yellow" data-goto-cat="brasa">Quero o meu na brasa</a>
     </div>
   </div>
 </section>
@@ -331,7 +286,7 @@
 
 <!-- Barra da sacola (aparece quando tem item) -->
 <button type="button" class="cart-bar" id="cartBar" data-open-cart hidden>
-  <span><b id="cartBarCount">0</b> itens · Ver sacola</span>
+  <span>🛍️ <b id="cartBarCount">0</b> <span id="cartBarLabel">itens</span> · Ver sacola</span>
   <strong id="cartBarTotal">R$ 0,00</strong>
 </button>
 
@@ -417,6 +372,24 @@
   </form>
 </aside>
 
+<!-- Janela do produto -->
+<div class="pmodal" id="productModal" role="dialog" aria-modal="true" aria-label="Escolher produto" hidden>
+  <div class="pmodal__box">
+    <button type="button" class="pmodal__close" id="productClose" aria-label="Fechar">✕</button>
+    <div class="pmodal__body" id="productBody"></div>
+    <div class="pmodal__foot">
+      <div class="qty">
+        <button type="button" id="productMinus" aria-label="Diminuir">−</button>
+        <span id="productQty">1</span>
+        <button type="button" id="productPlus" aria-label="Aumentar">+</button>
+      </div>
+      <button type="button" class="btn btn--yellow pm__add" id="productAdd">
+        <span>Adicionar</span><strong id="productTotal">R$ 0,00</strong>
+      </button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <!-- Botão flutuante WhatsApp -->
@@ -425,5 +398,7 @@
 </a>
 
 <script src="script.js"></script>
+<script src="menu-data.js"></script>
+<script src="pedido.js"></script>
 </body>
 </html>
