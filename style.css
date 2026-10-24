@@ -14,7 +14,7 @@
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; scroll-padding-top: 80px; }
+html { scroll-behavior: smooth; scroll-padding-top: 80px; touch-action: pan-x pan-y; -webkit-text-size-adjust: 100%; }
 body {
   font-family: "Inter", system-ui, sans-serif;
   background: var(--wine-deep);

@@ -40,3 +40,6 @@ const io = new IntersectionObserver(entries => {
   });
 }, { threshold: 0.12 });
 revealEls.forEach(el => io.observe(el));
+
+// Sem zoom de pinça no iPhone (o Safari ignora o user-scalable=no)
+document.addEventListener('gesturestart', e => e.preventDefault());
