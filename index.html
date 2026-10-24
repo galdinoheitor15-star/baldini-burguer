@@ -15,6 +15,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="pedido.css">
+  <link rel="stylesheet" href="bot.css">
 </head>
 <body>
 
@@ -293,7 +294,7 @@
     </div>
   </div>
   <div class="container footer__legal">
-    © <span id="year">2026</span> Baldini Burguer · CNPJ 46.723.226/0001-11
+    © <span id="year">2026</span> Baldini Burguer · CNPJ 46.723.226/0001-11 · <a href="https://galdinoheitor15-star.github.io/baldini-gestao/" rel="nofollow">Área da equipe</a>
   </div>
 </footer>
 
@@ -363,6 +364,7 @@
           <label><input type="radio" name="pagamento" value="Pix" checked> Pix</label>
           <label><input type="radio" name="pagamento" value="Cartão (maquininha)"> Cartão</label>
           <label><input type="radio" name="pagamento" value="Dinheiro"> Dinheiro</label>
+          <label id="payOnlineOpt" hidden><input type="radio" name="pagamento" value="Online"> 💳 Pagar online agora</label>
         </div>
       </fieldset>
       <fieldset class="field">
@@ -419,6 +421,10 @@
 
 <script src="script.js"></script>
 <script src="menu-data.js"></script>
+<script src="baldini-core.js"></script>
+<script src="firebase-config.js"></script>
+<script src="baldini-db.js"></script>
 <script src="pedido.js"></script>
+<script src="bot.js"></script>
 </body>
 </html>

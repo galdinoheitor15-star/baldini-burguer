@@ -279,7 +279,34 @@
     const btn = $('cartBtn');
     btn.classList.remove('bump'); void btn.offsetWidth; btn.classList.add('bump');
   }
-  function saveCart() { store.set('baldini-sacola', cart); renderCart(); }
+  function saveCart() { store.set('baldini-sacola', cart); renderCart(); syncDraft(); }
+
+  // ---------- Pedido ao vivo na gestão (aparece enquanto o cliente monta a sacola) ----------
+  const Core = window.BaldiniCore;
+  const DB = window.BaldiniDB;
+  let draftId = store.get('baldini-rascunho', null);
+  let draftTimer;
+  function draftCliente() {
+    const f = document.getElementById('stepCheckout')?.elements;
+    const v = k => (f && f[k] ? f[k].value.trim() : '');
+    return { nome: v('nome'), telefone: v('telefone') };
+  }
+  function syncDraft() {
+    if (!Core || !DB) return;
+    clearTimeout(draftTimer);
+    draftTimer = setTimeout(() => {
+      if (!cart.length && !draftId) return;
+      if (!draftId) { draftId = Core.newOrderId(); store.set('baldini-rascunho', draftId); }
+      const order = Core.sanitizeOrder({ id: draftId, origem: 'site', status: 'montando', itens: cart, cliente: draftCliente(), criadoEm: store.get('baldini-rascunho-em', 0) || Date.now() });
+      if (!store.get('baldini-rascunho-em', 0)) store.set('baldini-rascunho-em', order.criadoEm);
+      DB.saveOrder(order).catch(e => console.warn('Rascunho não salvo', e));
+    }, 700);
+  }
+  window.BaldiniSite = {
+    openProduct: id => openProduct(id),
+    goToCategory: id => goToCategory(id),
+    openCart: () => openCart()
+  };
   const subtotal = () => cart.reduce((s, l) => s + l.unit * l.qty, 0);
   const totalQty = () => cart.reduce((s, l) => s + l.qty, 0);
   const choiceText = c => c.items.map(i => `${i.qty > 1 ? i.qty + 'x ' : ''}${i.name}`).join(', ');
@@ -394,7 +421,46 @@
     $('trocoField').hidden = form.elements.pagamento.value !== 'Dinheiro';
   }
   form.addEventListener('change', updateFormFields);
+  form.addEventListener('input', e => { if (['nome', 'telefone'].includes(e.target.name)) syncDraft(); });
   updateFormFields();
+
+  // Pagamento online (InfinitePay) só aparece quando a loja ativou na gestão
+  let loja = {};
+  if (DB) DB.getConfig('loja').then(c => {
+    loja = c || {};
+    if (loja.infinitepayHandle && loja.pagamentoOnline) $('payOnlineOpt').hidden = false;
+  }).catch(() => {});
+
+  async function createPaymentLink(order) {
+    const payload = Core.infinitepayPayload(order, {
+      handle: loja.infinitepayHandle,
+      redirectUrl: location.origin + location.pathname + '?pagamento=retorno',
+      webhookUrl: loja.webhookUrl || undefined
+    });
+    const res = await fetch('https://api.checkout.infinitepay.io/links', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+    if (!res.ok) throw new Error('InfinitePay respondeu ' + res.status);
+    const data = await res.json();
+    return data.url || data.link || data.checkout_url;
+  }
+
+  function showPayPanel(url) {
+    const box = document.createElement('div');
+    box.className = 'pay-panel';
+    box.innerHTML = `<div class="pay-panel__box"><h3>Pedido enviado ✅</h3><p>Agora é só pagar com Pix ou cartão:</p>
+      <a class="btn btn--yellow btn--block" href="${esc(url)}" rel="noopener">💳 Pagar agora</a>
+      <button type="button" class="btn-link">Pagar depois</button></div>`;
+    box.querySelector('button').addEventListener('click', () => box.remove());
+    document.body.appendChild(box);
+  }
+
+  // Volta do pagamento: guarda os dados para a gestão conferir na InfinitePay
+  const params = new URLSearchParams(location.search);
+  if (params.get('pagamento') === 'retorno' && params.get('order_nsu') && DB) {
+    DB.updateOrder(params.get('order_nsu'), {
+      retornoPagamento: { slug: params.get('slug') || '', transaction_nsu: params.get('transaction_nsu') || '', capture_method: params.get('capture_method') || '', receipt_url: params.get('receipt_url') || '' }
+    }).then(() => toast('Pagamento recebido! Obrigado 🍔')).catch(e => console.warn(e));
+    history.replaceState(null, '', location.pathname);
+  }
 
   const hour = Number(new Intl.DateTimeFormat('pt-BR', { hour: 'numeric', hourCycle: 'h23', timeZone: 'America/Recife' }).format(new Date()));
   if (!(hour >= 17 && hour < 23)) {
@@ -423,7 +489,18 @@
     $('formError').hidden = true;
     store.set('baldini-cliente', { nome: val('nome'), telefone: val('telefone'), endereco: val('endereco'), bairro: val('bairro'), referencia: val('referencia') });
 
-    const msg = ['*NOVO PEDIDO - BALDINI BURGUER* 🍔', ''];
+    const reward = REWARDS.find(r => r.id === f.recompensa.value);
+    const orderId = draftId || (Core ? Core.newOrderId() : String(Date.now()));
+    const order = Core ? Core.sanitizeOrder({
+      id: orderId, origem: 'site', status: 'novo', itens: cart,
+      cliente: { nome: val('nome'), telefone: val('telefone') },
+      entrega: { tipo: f.entrega.value, endereco: delivery ? val('endereco') : '', bairro: delivery ? val('bairro') : '', referencia: delivery ? val('referencia') : '' },
+      pagamento: { forma: f.pagamento.value, troco: f.pagamento.value === 'Dinheiro' ? val('troco') : '' },
+      recompensa: reward ? reward.name : '', obs: val('obs'),
+      criadoEm: Date.now(), historico: [{ status: 'novo', em: Date.now() }]
+    }) : null;
+
+    const msg = [`*NOVO PEDIDO - BALDINI BURGUER* 🍔${Core ? ' ' + Core.shortCode(orderId) : ''}`, ''];
     msg.push(`👤 *Nome:* ${val('nome')}`);
     msg.push(`📞 *WhatsApp:* ${val('telefone')}`);
     msg.push('', '*🛍️ Itens do pedido:*');
@@ -448,14 +525,28 @@
     if (val('obs')) msg.push('', `📝 *Observações:* ${val('obs')}`);
 
     msg.push('', `⭐ *Clube de pontos:* este pedido vale ${pointsFor(subtotal())} pontos (creditar no ${val('telefone')})`);
-    const reward = REWARDS.find(r => r.id === f.recompensa.value);
     if (reward) msg.push(`🎁 *Quero trocar pontos por:* ${reward.name} (${rewardCost(reward)}) — confirmar saldo`);
 
     window.open(`https://api.whatsapp.com/send?phone=${WHATSAPP}&text=${encodeURIComponent(msg.join('\n'))}`, '_blank', 'noopener');
     toast('Pedido montado! É só confirmar o envio no WhatsApp ✅');
+
+    // Registra na gestão. Se o banco falhar, o pedido já foi pelo WhatsApp: nada se perde.
+    if (order && DB) {
+      clearTimeout(draftTimer);
+      store.set('baldini-ultimo-pedido', orderId);
+      DB.saveOrder(order).then(async () => {
+        if (f.pagamento.value !== 'Online') return;
+        const url = await createPaymentLink(order);
+        if (url) { showPayPanel(url); DB.updateOrder(orderId, { 'pagamento.link': url }).catch(() => {}); }
+      }).catch(e => { console.warn('Pedido não registrado na gestão', e); if (f.pagamento.value === 'Online') toast('Não deu para gerar o link agora. A loja envia pelo WhatsApp 👍'); });
+    }
+    draftId = null;
+    store.set('baldini-rascunho', null);
+    store.set('baldini-rascunho-em', 0);
     cart = [];
     f.obs.value = '';
-    saveCart();
+    store.set('baldini-sacola', cart);
+    renderCart();
     closeCart();
   });
 
