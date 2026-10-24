@@ -480,6 +480,7 @@
     if (val('telefone').replace(/\D/g, '').length < 10) missing.push(['telefone', 'WhatsApp com DDD']);
     if (delivery && !val('endereco')) missing.push(['endereco', 'endereço']);
     if (delivery && !val('bairro')) missing.push(['bairro', 'bairro']);
+    if (val('cpf') && Core && !Core.validCpf(val('cpf'))) missing.push(['cpf', 'CPF válido (ou deixe em branco)']);
     if (missing.length) {
       $('formError').textContent = `Preencha: ${missing.map(m => m[1]).join(', ')}.`;
       $('formError').hidden = false;
@@ -493,7 +494,7 @@
     const orderId = draftId || (Core ? Core.newOrderId() : String(Date.now()));
     const order = Core ? Core.sanitizeOrder({
       id: orderId, origem: 'site', status: 'novo', itens: cart,
-      cliente: { nome: val('nome'), telefone: val('telefone') },
+      cliente: { nome: val('nome'), telefone: val('telefone'), cpf: val('cpf') },
       entrega: { tipo: f.entrega.value, endereco: delivery ? val('endereco') : '', bairro: delivery ? val('bairro') : '', referencia: delivery ? val('referencia') : '' },
       pagamento: { forma: f.pagamento.value, troco: f.pagamento.value === 'Dinheiro' ? val('troco') : '' },
       recompensa: reward ? reward.name : '', obs: val('obs'),
@@ -503,6 +504,7 @@
     const msg = [`*NOVO PEDIDO - BALDINI BURGUER* 🍔${Core ? ' ' + Core.shortCode(orderId) : ''}`, ''];
     msg.push(`👤 *Nome:* ${val('nome')}`);
     msg.push(`📞 *WhatsApp:* ${val('telefone')}`);
+    if (val('cpf')) msg.push(`🧾 *CPF na nota:* ${val('cpf')}`);
     msg.push('', '*🛍️ Itens do pedido:*');
     cart.forEach(l => {
       msg.push('', `*${l.qty}x ${l.name}* — ${brl(l.unit * l.qty)}`);
