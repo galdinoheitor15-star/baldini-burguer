@@ -24,7 +24,9 @@
   function lastOrder() {
     try {
       const id = JSON.parse(localStorage.getItem('baldini-ultimo-pedido'));
-      return id && window.BaldiniDB ? window.BaldiniDB.getOrder(id) : Promise.resolve(null);
+      if (!id || !window.BaldiniDB) return Promise.resolve(null);
+      // Com internet ruim o banco pode demorar: o bot responde em até 4s mesmo sem o status
+      return Promise.race([window.BaldiniDB.getOrder(id), new Promise(ok => setTimeout(() => ok(null), 4000))]);
     } catch { return Promise.resolve(null); }
   }
 
