@@ -424,6 +424,7 @@
   const form = $('stepCheckout');
   const saved = store.get('baldini-cliente', {});
   ['nome', 'telefone', 'endereco', 'bairro', 'referencia'].forEach(k => { if (saved[k]) form.elements[k].value = saved[k]; });
+  if (window.BaldiniMask) BaldiniMask.apply(form); // telefone salvo antes também sai formatado
 
   function updateFormFields() {
     const delivery = form.elements.entrega.value === 'Delivery';
@@ -488,7 +489,8 @@
     const delivery = f.entrega.value === 'Delivery';
     const missing = [];
     if (!val('nome')) missing.push(['nome', 'nome']);
-    if (val('telefone').replace(/\D/g, '').length < 10) missing.push(['telefone', 'WhatsApp com DDD']);
+    const phoneOk = window.BaldiniMask ? BaldiniMask.validPhone(val('telefone')) : val('telefone').replace(/\D/g, '').length >= 10;
+    if (!phoneOk) missing.push(['telefone', 'WhatsApp com DDD']);
     if (delivery && !val('endereco')) missing.push(['endereco', 'endereço']);
     if (delivery && !val('bairro')) missing.push(['bairro', 'bairro']);
     if (val('cpf') && Core && !Core.validCpf(val('cpf'))) missing.push(['cpf', 'CPF válido (ou deixe em branco)']);
@@ -533,7 +535,7 @@
       msg.push(`🏪 *Retirada:* ${f.entrega.value.replace(/^Retirada /, '')}`);
     }
     let pay = f.pagamento.value;
-    if (pay === 'Dinheiro' && val('troco')) pay += ` (troco para R$ ${val('troco')})`;
+    if (pay === 'Dinheiro' && val('troco')) pay += ` (troco para ${val('troco')})`;
     msg.push(`💳 *Pagamento:* ${pay}`);
     if (val('obs')) msg.push('', `📝 *Observações:* ${val('obs')}`);
 
