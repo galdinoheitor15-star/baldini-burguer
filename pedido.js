@@ -376,7 +376,9 @@
   //  antes recalculava a página inteira a cada tecla e a digitação ficava lenta.)
   const vv = window.visualViewport;
   const fitEls = document.querySelectorAll('.drawer, .pmodal');
-  let fitFrame = 0, lastTop = -1, lastH = -1;
+  let fitFrame = 0, lastTop = -1, lastH = -1, fullH = 0;
+  // Girou o celular: a altura "sem teclado" muda
+  window.addEventListener('orientationchange', () => { fullH = 0; });
   function fitViewport() {
     fitFrame = 0;
     const top = Math.round(vv.offsetTop), h = Math.round(vv.height);
@@ -386,6 +388,16 @@
       el.style.setProperty('--vv-top', top + 'px');
       el.style.setProperty('--vv-h', h + 'px');
     });
+    // Teclado aberto: o rodapé (total e botão) sai da frente e o campo digitado fica à vista
+    fullH = Math.max(fullH, h, window.innerHeight);
+    const kb = fullH - h > 150;
+    drawer.classList.toggle('kb-open', kb);
+    const f = document.activeElement;
+    const body = f?.closest?.('.drawer__body');
+    if (kb && body && drawer.contains(body)) {
+      const r = f.getBoundingClientRect(), b = body.getBoundingClientRect();
+      body.scrollTop += r.top - b.top - (b.height - r.height) / 2;
+    }
   }
   const queueFit = () => { if (!fitFrame) fitFrame = requestAnimationFrame(fitViewport); };
   if (vv) {

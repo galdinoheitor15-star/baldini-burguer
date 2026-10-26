@@ -254,6 +254,7 @@ body.no-scroll .hero__ring, body.no-scroll .marquee__track { animation-play-stat
 body.no-scroll .wa-float { animation: none; }
 body.no-scroll .header, body.no-scroll .menu-tabs { backdrop-filter: none; }
 .drawer { contain: layout; }
+.drawer.kb-open .drawer__foot { display: none; }
 .pmodal__box { contain: layout paint; }
 .nav { margin-left: auto; }
 .cart-btn {
