@@ -372,14 +372,25 @@
     $('drawerTitle').textContent = step === 'cart' ? 'Sua sacola' : 'Finalizar pedido';
   }
   // iPhone: com o teclado aberto, a gaveta acompanha só a área visível da tela
+  // (Só mexe na gaveta e na janela do produto, no máximo 1x por quadro e só quando muda:
+  //  antes recalculava a página inteira a cada tecla e a digitação ficava lenta.)
   const vv = window.visualViewport;
+  const fitEls = document.querySelectorAll('.drawer, .pmodal');
+  let fitFrame = 0, lastTop = -1, lastH = -1;
   function fitViewport() {
-    document.documentElement.style.setProperty('--vv-top', vv.offsetTop + 'px');
-    document.documentElement.style.setProperty('--vv-h', vv.height + 'px');
+    fitFrame = 0;
+    const top = Math.round(vv.offsetTop), h = Math.round(vv.height);
+    if (top === lastTop && h === lastH) return;
+    lastTop = top; lastH = h;
+    fitEls.forEach(el => {
+      el.style.setProperty('--vv-top', top + 'px');
+      el.style.setProperty('--vv-h', h + 'px');
+    });
   }
+  const queueFit = () => { if (!fitFrame) fitFrame = requestAnimationFrame(fitViewport); };
   if (vv) {
-    vv.addEventListener('resize', fitViewport);
-    vv.addEventListener('scroll', fitViewport);
+    vv.addEventListener('resize', queueFit);
+    vv.addEventListener('scroll', queueFit);
     fitViewport();
   }
   let openFrame;

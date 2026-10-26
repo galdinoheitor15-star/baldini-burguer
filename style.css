@@ -248,6 +248,13 @@ h2 em, h1 em, .cta h2 em { font-style: normal; color: var(--yellow); }
 /* ===== Sacola ===== */
 [hidden] { display: none !important; }
 body.no-scroll { overflow: hidden; }
+/* Com a sacola ou o produto aberto, a página de trás fica parada (sem animação nem desfoque):
+   assim o celular só redesenha o formulário a cada tecla e a digitação não trava */
+body.no-scroll .hero__ring, body.no-scroll .marquee__track { animation-play-state: paused; }
+body.no-scroll .wa-float { animation: none; }
+body.no-scroll .header, body.no-scroll .menu-tabs { backdrop-filter: none; }
+.drawer { contain: layout; }
+.pmodal__box { contain: layout paint; }
 .nav { margin-left: auto; }
 .cart-btn {
   position: relative; margin-left: 20px;
