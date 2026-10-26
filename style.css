@@ -255,6 +255,11 @@ body.no-scroll .wa-float { animation: none; }
 body.no-scroll .header, body.no-scroll .menu-tabs { backdrop-filter: none; }
 .drawer { contain: layout; }
 .drawer.kb-open .drawer__foot { display: none; }
+/* iPhone: a barra do Safari sobre o teclado é transparente; os botões flutuantes do cardápio
+   (sacola, WhatsApp, Ajuda) não podem aparecer por baixo da gaveta, e o fundo dela vai até o fim */
+body.no-scroll .cart-bar, body.no-scroll .wa-float, body.no-scroll .bot__fab { visibility: hidden; }
+.drawer::after { content: ""; position: absolute; top: 100%; left: 0; right: 0; height: 100vh; background: var(--cream); }
+.pmodal::after { content: ""; position: absolute; top: 100%; left: 0; right: 0; height: 100vh; background: inherit; }
 .pmodal__box { contain: layout paint; }
 .nav { margin-left: auto; }
 .cart-btn {
