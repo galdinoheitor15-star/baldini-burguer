@@ -35,14 +35,14 @@
 
 /* ===== Janela do produto ===== */
 .pmodal {
-  position: fixed; inset: 0; z-index: 85;
+  position: fixed; top: var(--vv-top, 0px); left: 0; right: 0; height: var(--vv-h, 100%); z-index: 85;
   background: rgba(0, 0, 0, .65);
   display: flex; align-items: center; justify-content: center; padding: 20px;
   opacity: 0; transition: opacity .25s;
 }
 .pmodal.is-open { opacity: 1; }
 .pmodal__box {
-  position: relative; width: min(520px, 100%); max-height: calc(100dvh - 40px);
+  position: relative; width: min(520px, 100%); max-height: calc(var(--vv-h, 100dvh) - 40px);
   background: var(--cream); color: var(--text); border-radius: 20px; overflow: hidden;
   display: flex; flex-direction: column;
   transform: translateY(20px); transition: transform .25s;
@@ -114,7 +114,7 @@
   .menu-tabs { top: 76px; }
   .pcard { grid-template-columns: 96px 1fr; }
   .pmodal { padding: 0; align-items: flex-end; }
-  .pmodal__box { max-height: 94dvh; border-radius: 20px 20px 0 0; transform: translateY(100%); }
+  .pmodal__box { max-height: calc(var(--vv-h, 100dvh) * .94); border-radius: 20px 20px 0 0; transform: translateY(100%); }
 }
 
 /* ===== Clube de pontos ===== */

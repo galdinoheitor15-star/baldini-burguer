@@ -371,6 +371,17 @@
     $('stepCheckout').hidden = step !== 'checkout';
     $('drawerTitle').textContent = step === 'cart' ? 'Sua sacola' : 'Finalizar pedido';
   }
+  // iPhone: com o teclado aberto, a gaveta acompanha só a área visível da tela
+  const vv = window.visualViewport;
+  function fitViewport() {
+    document.documentElement.style.setProperty('--vv-top', vv.offsetTop + 'px');
+    document.documentElement.style.setProperty('--vv-h', vv.height + 'px');
+  }
+  if (vv) {
+    vv.addEventListener('resize', fitViewport);
+    vv.addEventListener('scroll', fitViewport);
+    fitViewport();
+  }
   let openFrame;
   function openCart() {
     showStep('cart');

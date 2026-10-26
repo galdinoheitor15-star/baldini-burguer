@@ -299,7 +299,8 @@ body.has-cart .footer { padding-bottom: 100px; }
 .drawer-overlay { position: fixed; inset: 0; z-index: 70; background: rgba(0,0,0,.6); opacity: 0; transition: opacity .3s; }
 .drawer-overlay.is-open { opacity: 1; }
 .drawer {
-  position: fixed; top: 0; right: 0; bottom: 0; z-index: 80;
+  position: fixed; top: var(--vv-top, 0px); right: 0; z-index: 80;
+  height: var(--vv-h, 100%);
   width: min(440px, 100%);
   background: var(--cream); color: var(--text);
   display: flex; flex-direction: column;
