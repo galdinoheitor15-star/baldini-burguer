@@ -333,11 +333,11 @@
         <input type="text" name="nome" autocomplete="name" maxlength="80" required>
       </label>
       <label class="field">Seu WhatsApp
-        <input type="tel" name="telefone" autocomplete="tel" data-mask="phone" placeholder="(81) 98790-8900" required>
+        <input maxlength="15" type="tel" name="telefone" autocomplete="tel" data-mask="phone" placeholder="(81) 98790-8900" required>
         <small class="field__hint">⭐ É por ele que seus pontos entram na conta Baldini.</small>
       </label>
       <label class="field">CPF na nota (opcional)
-        <input type="text" name="cpf" data-mask="cpf" autocomplete="off" placeholder="000.000.000-00">
+        <input maxlength="14" type="text" name="cpf" data-mask="cpf" autocomplete="off" placeholder="000.000.000-00">
       </label>
 
       <fieldset class="field">
@@ -376,7 +376,7 @@
       </fieldset>
 
       <label class="field" id="trocoField" hidden>Troco para quanto? (opcional)
-        <input type="text" name="troco" data-mask="money" placeholder="Ex.: R$ 50,00">
+        <input maxlength="16" type="text" name="troco" data-mask="money" placeholder="Ex.: R$ 50,00">
       </label>
 
       <label class="field">Observações (opcional)
